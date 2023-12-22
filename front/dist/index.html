@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div
+            class="container mx-auto px-4 min-h-screen flex flex-col justify-center items-center"
+        >
+            <p>AI Assistant</p>
+
+            <button
+                id="button3"
+                class="rounded px-4 py-2 bg-zinc-800 text-zinc-100 w-[200px] mb-2"
+            >
+                Signin
+            </button>
+
+            <div id="signinresult"></div>
+
+            <div id="signoutresult"></div>
+        </div>
+        <script>
+            const endpoint =
+                'https://28uowuqx7l.execute-api.us-east-1.amazonaws.com'
+
+            const makeApiCall = async (path, data) =>
+                fetch(endpoint + path, {
+                    method: 'POST',
+                    mode: 'cors',
+                    //cache: "no-cache",
+                    // credentials: "same-origin",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${await window.localStorage.getItem(
+                            'idtoken'
+                        )}`
+                    },
+                    // redirect: "follow",
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(data)
+                })
+
+            const makeFrontendApiCall = (path, data) =>
+                fetch('' + path, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(data)
+                })
+
+            const signinresult = document.getElementById('signinresult')
+
+            /**
+             * Event Handlers
+             */
+
+            document
+                .getElementById('button3')
+                .addEventListener('click', async () => {
+                    const x = await makeApiCall('/sendLoginEmail', {
+                        email: 'garysjennings@gmail.com'
+                    })
+                    const xx = await x.json()
+
+                    signinresult.innerHTML = JSON.stringify(xx)
+                })
+        </script>
+    </body>
+</html>

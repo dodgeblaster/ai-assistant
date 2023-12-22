@@ -1,0 +1,46 @@
+<html>
+    <p>Signing in...</p>
+    <script>
+        const endpoint =
+            'https://28uowuqx7l.execute-api.us-east-1.amazonaws.com'
+
+        const makeApiCall = async (path, data) =>
+            fetch(endpoint + path, {
+                method: 'POST',
+                mode: 'cors',
+                //cache: "no-cache",
+                // credentials: "same-origin",
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await window.localStorage.getItem(
+                        'idtoken'
+                    )}`
+                },
+                // redirect: "follow",
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(data)
+            })
+
+        function getQueryParams(url) {
+            const paramArr = url.slice(url.indexOf('?') + 1).split('&')
+            const params = {}
+            paramArr.map((param) => {
+                const [key, val] = param.split('=')
+                params[key] = decodeURIComponent(val)
+            })
+            return params
+        }
+
+        const params = getQueryParams(window.location.href)
+        const token = params.token
+
+        makeApiCall('/processMagicLink', { token })
+            .then((x) => x.json())
+            .then((x) => {
+                window.localStorage.setItem('sessionId', x.sessionId)
+                setTimeout(() => {
+                    window.location = '/app'
+                }, 2000)
+            })
+    </script>
+</html>
